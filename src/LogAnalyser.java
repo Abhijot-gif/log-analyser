@@ -44,10 +44,19 @@ public class LogAnalyser {
             }
             scanner.close(); // close the file once complete
 
-            // Number of failed counts for each IP address
-            System.out.println("Failed login attempts per IP: ");
+            // An IP with too many failures looks like a brute-force attack
+            int threshold = 5;
+
+            System.out.println("--- Security Report ---");
             for (String ip: failedAttempts.keySet()) {
-                System.out.println(ip + " -> " + failedAttempts.get(ip));
+                int failures = failedAttempts.get(ip);
+                if (failures >= threshold) {
+                    System.out.println("ALERT: " + ip + " had " + failures
+                            + " failed logins - possible brute-force attack."
+                    );
+                } else {
+                    System.out.println("OK: " + ip + " had " + failures + " failed login(s)");
+                }
             }
         }
         catch (FileNotFoundException e){
